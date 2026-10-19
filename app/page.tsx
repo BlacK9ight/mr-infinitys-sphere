@@ -1,4 +1,6 @@
 "use client";
+import UnderstandingRSC from "./understanding-react-server-components/content.mdx";
+import Link from "next/link";
 
 import React, { useState, useEffect } from 'react';
 
@@ -86,16 +88,15 @@ export default function MrInfinityBlog() {
             </header>
 
             <div className="grid gap-6 md:grid-cols-2">
-              <article 
-                onClick={() => setView('article')}
-                className={`p-8 rounded-3xl ${cardClasses} group`}
-              >
+              {/* Architecture Article Card */}
+              <article onClick={() => setView('article')} className={`p-8 rounded-3xl ${cardClasses} group`}>
                 <span className={`text-sm font-bold uppercase tracking-wider ${isDarkMode ? 'text-orange-400' : 'text-orange-700'}`}>Architecture</span>
                 <h3 className="font-satoshi text-2xl font-bold mt-3 mb-2 group-hover:text-orange-500 transition-colors">Understanding React Server Components</h3>
                 <p className={`mb-6 ${isDarkMode ? 'text-stone-400' : 'text-stone-600'}`}>A deep dive into how RSCs change the mental model of building React applications in the modern web.</p>
                 <span className="text-sm opacity-70">Oct 18, 2026 • 5 min read</span>
               </article>
               
+              {/* Design Article Card */}
               <article className={`p-8 rounded-3xl ${cardClasses} group`}>
                 <span className={`text-sm font-bold uppercase tracking-wider ${isDarkMode ? 'text-orange-400' : 'text-orange-700'}`}>Design</span>
                 <h3 className="font-satoshi text-2xl font-bold mt-3 mb-2 group-hover:text-orange-500 transition-colors">The Math Behind Glassmorphism</h3>
@@ -127,30 +128,10 @@ export default function MrInfinityBlog() {
             >
               ← Back to Orbit
             </button>
-            <span className={`text-sm font-bold uppercase tracking-wider ${isDarkMode ? 'text-orange-400' : 'text-orange-700'}`}>Architecture</span>
-            <h1 className="font-satoshi text-4xl md:text-5xl font-bold mt-4 mb-6 leading-tight">Understanding React Server Components</h1>
             
-            <div className="prose prose-lg max-w-none">
-              <p className={`text-xl leading-relaxed mb-8 ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>
-                For years, we've built React apps by sending JavaScript to the browser and letting the client do the heavy lifting. Server Components flip that model on its head.
-              </p>
-              <div className={`p-6 rounded-2xl mb-8 font-mono text-sm overflow-x-auto ${isDarkMode ? 'bg-[#1e1e1e] text-blue-300' : 'bg-stone-900 text-blue-300'}`}>
-                <code>{`// A standard Server Component
-export default async function BlogPost({ id }) {
-  const post = await db.posts.get(id); // Runs on the server!
-  
-  return (
-    <article>
-      <h1>{post.title}</h1>
-      <p>{post.content}</p>
-    </article>
-  );
-}`}</code>
-              </div>
-              <p className={`text-lg leading-relaxed ${isDarkMode ? 'text-stone-400' : 'text-stone-600'}`}>
-                Notice how we are fetching data directly inside the component without `useEffect` or `useState`. This code never ships to the browser, reducing bundle sizes dramatically and speeding up the initial page load. It's an infinite loop of performance improvements.
-              </p>
-            </div>
+            {/* The MDX Component */}
+            <UnderstandingRSC />
+            
           </article>
         )}
       </main>
