@@ -1,1 +1,32 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* Lets `dark:` classes follow the class that next-themes puts on <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Author for reading, Satoshi for headings (both loaded from Fontshare in layout.tsx) */
+  --font-sans: "Author", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Satoshi", ui-sans-serif, system-ui, sans-serif;
+}
+
+::selection {
+  background: rgba(194, 65, 12, 0.28);
+}
+
+/* Visible keyboard focus everywhere */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid #c2410c;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* TipTap Placeholder Styling */
+.tiptap p.is-editor-empty:first-child::before {
+  color: #9ca3af;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
