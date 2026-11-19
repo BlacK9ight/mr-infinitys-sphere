@@ -1,19 +1,10 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { clerkMiddleware } from "@clerk/nextjs/server";
 
-// This tells Clerk that any URL starting with /admin is completely locked down
-const isProtectedRoute = createRouteMatcher(['/admin(.*)'])
-
-export default clerkMiddleware(async (auth, req) => {
-  if (isProtectedRoute(req)) {
-    await auth.protect()
-  }
-})
+// Only /admin needs a login. The public site never depends on Clerk.
+export default clerkMiddleware(async (auth) => {
+  await auth.protect();
+});
 
 export const config = {
-  matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
-    '/(api|trpc)(.*)',
-  ],
-}
+  matcher: ["/admin(.*)"],
+};
