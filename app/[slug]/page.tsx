@@ -6,15 +6,18 @@ import { prisma } from "@/lib/prisma";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import FeedbackWidget from "@/components/FeedbackWidget";
-import { excerpt, formatDate, readingTime } from "@/lib/text";
+import PostArticle from "@/components/PostArticle";
+import { excerpt, formatDate } from "@/lib/text";
 import { fontFamilyFor } from "@/lib/fonts";
 import { glass, glassHover } from "@/lib/ui";
 
-export const dynamic = "force-dynamic";
+// Served from cache for speed; the admin actions rebuild it when a post changes.
+export const revalidate = 3600;
 
 type Props = { params: Promise<{ slug: string }> };
 
 // cache() lets the page and its metadata share one database lookup.
+// Drafts are never shown here.
 const getPost = cache(async (slug: string) => {
   const post = await prisma.post.findUnique({ where: { slug } });
   return post && post.published ? post : null;
@@ -32,16 +35,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
-  const post = await getPost(slug);
+  // Both lookups start together instead of one after the other.
+  // "More" is titles and dates only, so images inside other posts are not loaded.
+  const [post, more] = await Promise.all([
+    getPost(slug),
+    prisma.post.findMany({
+      where: { published: true, NOT: { slug } },
+      orderBy: { createdAt: "desc" },
+      take: 2,
+      select: { id: true, slug: true, title: true, font: true, category: true, createdAt: true },
+    }),
+  ]);
   if (!post) notFound();
-
-  // Titles and dates only, so images inside other posts are not loaded here.
-  const more = await prisma.post.findMany({
-    where: { published: true, NOT: { slug } },
-    orderBy: { createdAt: "desc" },
-    take: 2,
-    select: { id: true, slug: true, title: true, font: true, category: true, createdAt: true },
-  });
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -55,23 +60,9 @@ export default async function ArticlePage({ params }: Props) {
           ← Back to Orbit
         </Link>
 
-        <article style={{ fontFamily: fontFamilyFor(post.font) }} className="mt-10">
-          {post.category && (
-            <span className="text-sm font-bold uppercase tracking-wider text-orange-800 dark:text-orange-400">
-              {post.category}
-            </span>
-          )}
-          <h1 className="mt-2 text-4xl md:text-5xl font-bold tracking-tight leading-[1.1]">{post.title}</h1>
-          <p className="mt-4 text-sm text-stone-600 dark:text-stone-400">
-            {formatDate(post.createdAt)} • {readingTime(post.content)} min read
-          </p>
-
-          {/* Post HTML comes from the admin editor only (see lib/admin.ts). */}
-          <div
-            className="mt-10 prose prose-lg prose-stone dark:prose-invert max-w-none prose-a:text-orange-800 dark:prose-a:text-orange-400 prose-blockquote:border-orange-700 prose-img:rounded-xl"
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          />
-        </article>
+        <div className="mt-10">
+          <PostArticle post={post} />
+        </div>
 
         {more.length > 0 && (
           <section className="mt-20">

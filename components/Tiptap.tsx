@@ -27,7 +27,7 @@ async function fileToDataUrl(file: File, maxWidth = 1400, quality = 0.82): Promi
   }
 }
 
-export default function Tiptap() {
+export default function Tiptap({ initialContent = "" }: { initialContent?: string }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const editor = useEditor({
@@ -38,7 +38,7 @@ export default function Tiptap() {
         placeholder: "Write your article content here...",
       }),
     ],
-    content: "", // Empty string allows the placeholder to appear
+    content: initialContent, // An empty string lets the placeholder appear
     // Next.js renders on the server first; this avoids a hydration mismatch.
     immediatelyRender: false,
     // Keeps the toolbar highlights and the hidden form field in sync while typing.

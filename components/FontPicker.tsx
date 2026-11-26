@@ -4,8 +4,8 @@ import { useState } from "react";
 import { FONT_OPTIONS, DEFAULT_FONT } from "@/lib/fonts";
 import { labelClass } from "@/lib/ui";
 
-export default function FontPicker() {
-  const [value, setValue] = useState<string>(DEFAULT_FONT);
+export default function FontPicker({ defaultValue = DEFAULT_FONT }: { defaultValue?: string }) {
+  const [value, setValue] = useState<string>(defaultValue);
 
   return (
     <fieldset className="flex flex-col gap-2">
