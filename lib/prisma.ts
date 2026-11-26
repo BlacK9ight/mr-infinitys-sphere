@@ -6,7 +6,10 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createClient() {
-  const adapter = new PrismaPg({ connectionString: process.env.POSTGRES_URL });
+  // The pg library currently treats sslmode=require as verify-full and prints a warning about
+  // a future change. Saying "verify-full" out loud keeps today's exact behavior and silences it.
+  const connectionString = (process.env.POSTGRES_URL ?? "").replace("sslmode=require", "sslmode=verify-full");
+  const adapter = new PrismaPg({ connectionString });
   return new PrismaClient({ adapter });
 }
 

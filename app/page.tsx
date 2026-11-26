@@ -8,8 +8,9 @@ import { excerpt, formatDate, readingTime } from "@/lib/text";
 import { fontFamilyFor } from "@/lib/fonts";
 import { glass, glassHover } from "@/lib/ui";
 
-// Always read fresh posts, so a new post shows up right after publishing.
-export const dynamic = "force-dynamic";
+// Served from cache for speed. The admin actions rebuild it the moment you publish, edit or delete,
+// and it refreshes by itself at least once an hour.
+export const revalidate = 3600;
 
 // Rings and a slow orbiting dot, echoing the logo.
 function Orbit() {

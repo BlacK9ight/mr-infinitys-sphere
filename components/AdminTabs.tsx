@@ -4,8 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const TABS = [
-  { href: "/admin", label: "Write" },
-  { href: "/admin/messages", label: "Messages" },
+  { href: "/admin", label: "Write", isActive: (p: string) => p === "/admin" },
+  { href: "/admin/posts", label: "Posts", isActive: (p: string) => p.startsWith("/admin/posts") || p.startsWith("/admin/preview") },
+  { href: "/admin/messages", label: "Messages", isActive: (p: string) => p.startsWith("/admin/messages") },
 ];
 
 export default function AdminTabs() {
@@ -13,7 +14,7 @@ export default function AdminTabs() {
   return (
     <nav aria-label="Admin sections" className="mb-8 flex gap-6 border-b border-black/10 dark:border-white/10">
       {TABS.map((tab) => {
-        const active = pathname === tab.href;
+        const active = tab.isActive(pathname);
         return (
           <Link
             key={tab.href}
